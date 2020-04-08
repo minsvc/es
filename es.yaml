@@ -7,19 +7,36 @@ spec:
   version: 7.6.2
   nodeSets:
   - name: default
-    env:
-    - name: ES_JAVA_OPTS
-      value: -Xms512m -Xmx512m
-    resources:
-      requests:
-        memory: 512Mi
-        cpu: 0.5
-      limits:
-        memory: 512Mi
-        cpu: 1
     count: 1
-    config:
-      node.master: true
-      node.data: true
-      node.ingest: true
-      node.store.allow_mmap: false
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          env:
+          - name: ES_JAVA_OPTS
+            value: -Xms512m -Xmx512m
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 0.5
+            limits:
+              memory: 1Gi
+              cpu: 1
+          config:
+            node.master: true
+            node.data: true
+            node.ingest: true
+            node.store.allow_mmap: false
+        volumes:
+        - name: elasticsearch-data
+          emptyDir: {}
+        #volumeCliaimTemplates:
+        #- metadata:
+        #    name: elasticsearch-data
+        #  spec:
+        #    accessModes:
+        #    - ReadWriteOnce
+        #    resource:
+        #      requests:
+        #        storage: 1Gi
+        #    storageClassName: rook-ceph-block 
